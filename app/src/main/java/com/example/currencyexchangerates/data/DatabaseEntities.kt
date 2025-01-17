@@ -10,3 +10,9 @@ data class TestEntity(
     @ColumnInfo(name = "first_name") val firstName: String,
     @ColumnInfo(name = "last_name") val lastName: String
 )
+
+@Entity
+data class Symbols(
+    @PrimaryKey val code: String,
+    val name: String
+)

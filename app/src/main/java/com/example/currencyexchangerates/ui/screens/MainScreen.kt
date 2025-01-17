@@ -19,7 +19,8 @@ import com.example.currencyexchangerates.ui.components.TopBar
 import com.example.currencyexchangerates.ui.theme.MyAppTheme
 
 @Composable
-fun MainBackground() {
+fun MainBackground(
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
