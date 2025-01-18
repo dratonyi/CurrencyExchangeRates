@@ -32,10 +32,19 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background // This will apply your Compose background
                 ) {
-                    MainBackground()
+                    MainBackground(
+                        viewModel.baseCurrency,
+                        viewModel.targetCurrency
+                    )
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        //save the current currencies and amounts to a local database
     }
 }
 
