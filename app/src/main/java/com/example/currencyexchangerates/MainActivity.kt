@@ -34,7 +34,11 @@ class MainActivity : ComponentActivity() {
                 ) {
                     MainBackground(
                         viewModel.baseCurrency,
-                        viewModel.targetCurrency
+                        viewModel.targetCurrency,
+                        viewModel.baseAmount,
+                        viewModel.targetAmount,
+                        { viewModel.updateBaseAmount(it) },
+                        { viewModel.updateTargetAmount(it) }
                     )
                 }
             }

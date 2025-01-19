@@ -26,10 +26,16 @@ import kotlinx.coroutines.flow.StateFlow
 @Composable
 fun MainBackground(
     baseCurrency: StateFlow<Currency>,
-    targetCurrency: StateFlow<Currency>
+    targetCurrency: StateFlow<Currency>,
+    baseAmount: StateFlow<String>,
+    targetAmount: StateFlow<String>,
+    updateBaseAmount: (String) -> Unit,
+    updateTargetAmount: (String) -> Unit
 ) {
     val base by baseCurrency.collectAsState()
     val target by targetCurrency.collectAsState()
+    val bAmount by baseAmount.collectAsState()
+    val tAmount by targetAmount.collectAsState()
 
     Column(
         modifier = Modifier
@@ -40,9 +46,9 @@ fun MainBackground(
     ) {
         TopBar()
         Spacer(modifier = Modifier.height(50.dp))
-        CurrencyCard(base, 100.10)
+        CurrencyCard(base, bAmount, updateBaseAmount)
         Spacer(modifier = Modifier.height(50.dp))
-        CurrencyCard(target, 150.23)
+        CurrencyCard(target, tAmount, updateTargetAmount)
     }
 
 }
@@ -60,7 +66,12 @@ fun MainBackgroundPreview() {
         ) {
             MainBackground(
                 MutableStateFlow(Currency.getInstance("EUR")),
-                MutableStateFlow(Currency.getInstance("CAD")))
+                MutableStateFlow(Currency.getInstance("CAD")),
+                MutableStateFlow("100"),
+                MutableStateFlow("100"),
+                {/*TODO*/},
+                {/*TODO*/}
+            )
         }
     }
 }
@@ -78,7 +89,12 @@ fun MainBackgroundLightPreview() {
         ) {
             MainBackground(
                 MutableStateFlow(Currency.getInstance("EUR")),
-                MutableStateFlow(Currency.getInstance("CAD")))
+                MutableStateFlow(Currency.getInstance("CAD")),
+                MutableStateFlow("100"),
+                MutableStateFlow("100"),
+                {/*TODO*/},
+                {/*TODO*/}
+            )
         }
     }
 }
