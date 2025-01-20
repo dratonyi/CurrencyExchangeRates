@@ -6,10 +6,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarColors
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,19 +28,15 @@ import com.example.currencyexchangerates.ui.theme.MyAppTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar() {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            //.background(color = colorResource(id = R.color.top_bar_color))
-            .height(40.dp)
-    ) {
-        Text(
-            text = "Home",
-            modifier = Modifier
-                .align(Alignment.Center),
-            //color = colorResource(id = R.color.white)
+
+    CenterAlignedTopAppBar(
+        title = { Text(text = "Home") },
+        scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(),
+        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+            containerColor = MaterialTheme.colorScheme.background,
+            titleContentColor = MaterialTheme.colorScheme.primary
         )
-    }
+    )
 }
 
 @Composable

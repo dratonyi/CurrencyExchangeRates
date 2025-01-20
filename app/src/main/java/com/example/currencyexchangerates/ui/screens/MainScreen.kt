@@ -30,7 +30,8 @@ fun MainBackground(
     baseAmount: StateFlow<String>,
     targetAmount: StateFlow<String>,
     updateBaseAmount: (String) -> Unit,
-    updateTargetAmount: (String) -> Unit
+    updateTargetAmount: (String) -> Unit,
+    navToChooseCurrency: () -> Unit
 ) {
     val base by baseCurrency.collectAsState()
     val target by targetCurrency.collectAsState()
@@ -70,7 +71,8 @@ fun MainBackgroundPreview() {
                 MutableStateFlow("100"),
                 MutableStateFlow("100"),
                 {/*TODO*/},
-                {/*TODO*/}
+                {/*TODO*/},
+                {}
             )
         }
     }
@@ -93,7 +95,8 @@ fun MainBackgroundLightPreview() {
                 MutableStateFlow("100"),
                 MutableStateFlow("100"),
                 {/*TODO*/},
-                {/*TODO*/}
+                {/*TODO*/},
+                {}
             )
         }
     }
