@@ -29,6 +29,11 @@ class MainViewModel @Inject constructor(
 
     val exchangeRate: Double = 1.5
 
+    var listOfCurrencies: MutableList<Currency> = Currency.getAvailableCurrencies().toMutableList()
+
+    private val _currSearch = MutableStateFlow("")
+    val currSearch = _currSearch.asStateFlow()
+
     init {
         getSavedData()
     }
@@ -45,6 +50,9 @@ class MainViewModel @Inject constructor(
                 saveData()
             }
             UserEvent.ChangeTargetCurrency -> TODO()
+            is UserEvent.SearchCurrency-> {
+                searchCurrencyList(event.search)
+            }
             UserEvent.doNothing -> TODO()
         }
     }
@@ -99,6 +107,19 @@ class MainViewModel @Inject constructor(
             _baseCurrency.update { it.copy(
                 amount = "0"
             ) }
+        }
+    }
+
+    private fun searchCurrencyList(search: String) {
+        _currSearch.update { search }
+
+        if(_currSearch.value == "") {
+            listOfCurrencies = Currency.getAvailableCurrencies().toMutableList()
+        }
+        else {
+            listOfCurrencies = (listOfCurrencies.filter { currency ->
+                currency.currencyCode.contains(_currSearch.value) || currency.displayName.contains(_currSearch.value)
+            }).toMutableList()
         }
     }
 

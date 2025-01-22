@@ -51,6 +51,7 @@ class MainActivity : ComponentActivity() {
 
                     val baseCurrency = viewModel.baseCurrency.collectAsState()
                     val targetCurrency = viewModel.targetCurrency.collectAsState()
+                    val search = viewModel.currSearch.collectAsState()
 
                     NavHost(
                         navController = navController,
@@ -69,7 +70,12 @@ class MainActivity : ComponentActivity() {
 
                         composable("ChooseCurrency") {
                             ChooseCurrency(
-                                onBackButton = { navController.navigate("Main") }
+                                onBackButton = {
+                                    navController.navigateUp()
+                                },
+                                viewModel.listOfCurrencies,
+                                search.value,
+                                { viewModel.onEvent(it) }
                             )
                         }
                     }
