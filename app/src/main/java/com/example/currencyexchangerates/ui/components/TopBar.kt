@@ -28,7 +28,6 @@ import com.example.currencyexchangerates.ui.theme.MyAppTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar() {
-
     CenterAlignedTopAppBar(
         title = { Text(text = "Home") },
         scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(),

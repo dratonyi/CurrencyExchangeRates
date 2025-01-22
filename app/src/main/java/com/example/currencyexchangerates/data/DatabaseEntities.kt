@@ -11,8 +11,10 @@ data class TestEntity(
     @ColumnInfo(name = "last_name") val lastName: String
 )
 
-@Entity
-data class Symbols(
-    @PrimaryKey val code: String,
-    val name: String
+@Entity(tableName = "last_saved_data")
+data class SavedData(
+    @PrimaryKey val id: Int = 0,
+    val baseCurrency: String,
+    val targetCurrency: String,
+    val baseAmount: String
 )

@@ -9,17 +9,33 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.room.Room
+import com.example.currencyexchangerates.data.AppDatabase
+import com.example.currencyexchangerates.data.DatabaseDAO
 import com.example.currencyexchangerates.ui.screens.ChooseCurrency
 import com.example.currencyexchangerates.ui.screens.MainBackground
 import com.example.currencyexchangerates.ui.theme.MyAppTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        /*val db by lazy{
+            Room.databaseBuilder(
+                applicationContext,
+                AppDatabase::class.java,
+                "app_database.db"
+            ).build()
+        }*/
+
         val viewModel: MainViewModel by viewModels()
 
         super.onCreate(savedInstanceState)
@@ -33,18 +49,18 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     internalPadding
 
+                    val baseCurrency = viewModel.baseCurrency.collectAsState()
+                    val targetCurrency = viewModel.targetCurrency.collectAsState()
+
                     NavHost(
                         navController = navController,
                         startDestination = "Main"
                     ) {
                         composable("Main") {
                             MainBackground(
-                                viewModel.baseCurrency,
-                                viewModel.targetCurrency,
-                                viewModel.baseAmount,
-                                viewModel.targetAmount,
-                                { viewModel.updateBaseAmount(it) },
-                                { viewModel.updateTargetAmount(it) },
+                                baseCurrency.value,
+                                targetCurrency.value,
+                                { viewModel.onEvent(it) },
                                 navToChooseCurrency = {
                                     navController.navigate("ChooseCurrency")
                                 }
@@ -58,28 +74,8 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                 }
-
-                /*Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background // This will apply your Compose background
-                ) {
-                    MainBackground(
-                        viewModel.baseCurrency,
-                        viewModel.targetCurrency,
-                        viewModel.baseAmount,
-                        viewModel.targetAmount,
-                        { viewModel.updateBaseAmount(it) },
-                        { viewModel.updateTargetAmount(it) }
-                    )
-                }*/
             }
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-
-        //save the current currencies and amounts to a local database
     }
 }
 

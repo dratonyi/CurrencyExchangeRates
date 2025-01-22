@@ -45,13 +45,16 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.currencyexchangerates.R
+import com.example.currencyexchangerates.UserEvent
+import com.example.currencyexchangerates.data.CurrencyData
 import com.example.currencyexchangerates.ui.theme.MyAppTheme
 
 @Composable
 fun CurrencyCard(
-    currency: Currency,
-    amount: String,
-    updateAmount: (String) -> Unit
+    currency: CurrencyData,
+    type: String,
+    updateAmount: (event: UserEvent) -> Unit,
+    onCardClick: () -> Unit
 ) {
     Surface(
         modifier = Modifier
@@ -68,17 +71,22 @@ fun CurrencyCard(
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             Text(
-                text = currency.currencyCode
+                text = currency.currency.currencyCode
             )
 
             Box(
                 modifier = Modifier.background(MaterialTheme.colorScheme.surface)
             ) {
                 OutlinedTextField(
-                    value = amount,
+                    value = currency.amount,
                     onValueChange = {newVal ->
                         if (newVal.all { it.isDigit() || it == '.' } && newVal.count { it == '.' } <= 1) {
-                            updateAmount(newVal)
+                            if (type == "base") {
+                                updateAmount(UserEvent.ChangeBaseAmount(newVal))
+                            }
+                            else {
+                                updateAmount(UserEvent.ChangeTargetAmount(newVal))
+                            }
                         }
                     },
                     modifier = Modifier
@@ -97,7 +105,7 @@ fun CurrencyCard(
                 )
             }
 
-            IconButton(onClick = {  }) {
+            IconButton(onClick = { onCardClick() }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                     contentDescription = "null",
@@ -112,6 +120,6 @@ fun CurrencyCard(
 @Composable
 fun PreviewCurrencyCard() {
     MyAppTheme {
-        CurrencyCard(Currency.getInstance("EUR"), "100.21123", {/* TODO */})
+        CurrencyCard(CurrencyData(Currency.getInstance("EUR"), "100.21123"), "base", {/* TODO */}, {})
     }
 }

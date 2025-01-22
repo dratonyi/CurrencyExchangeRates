@@ -21,6 +21,10 @@ fun ChooseCurrency(
     CenterAlignedTopAppBar(
         title = { Text(text = "Choose Currency") },
         scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(),
+        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+            containerColor = MaterialTheme.colorScheme.background,
+            titleContentColor = MaterialTheme.colorScheme.primary
+        ),
         navigationIcon = {
             IconButton(onClick = { onBackButton() }) {
                 Icon(
