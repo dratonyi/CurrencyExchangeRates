@@ -36,6 +36,7 @@ class MainViewModel @Inject constructor(
 
     init {
         getSavedData()
+        
     }
 
     fun onEvent(event: UserEvent) {
