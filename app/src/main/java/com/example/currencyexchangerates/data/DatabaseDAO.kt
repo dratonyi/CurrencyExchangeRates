@@ -10,6 +10,8 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface DatabaseDAO {
 
+    //SavedData
+
     @Upsert
     suspend fun saveData(data: SavedData)
 
@@ -18,4 +20,15 @@ interface DatabaseDAO {
 
     @Query("SELECT * FROM last_saved_data WHERE id = 0")
     suspend fun getSavedData(): SavedData
+
+    //Symbols
+
+    @Query("SELECT * FROM symbols WHERE id = 0")
+    suspend fun getSavedSymbols(): Symbols
+
+    @Upsert
+    suspend fun saveSymbols(symbols: Symbols)
+
+    @Delete
+    suspend fun deleteSymbols(symbols: Symbols)
 }

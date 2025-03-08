@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -34,7 +35,7 @@ import com.example.currencyexchangerates.ui.theme.MyAppTheme
 @Composable
 fun ChooseCurrency(
     onBackButton: () -> Unit,
-    currencies: List<Currency>,
+    currencies: Map<String, String>,
     search: String,
     onSearch: (UserEvent) -> Unit
 ) {
@@ -84,7 +85,7 @@ fun ChooseCurrency(
                     contentPadding = PaddingValues(15.dp),
                     verticalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
-                    itemsIndexed(currencies) { index, currency ->
+                    itemsIndexed(currencies.entries.toList()) { index, currency ->
                         CurrencyListItem(currency)
                     }
                 }
@@ -101,6 +102,6 @@ fun ChooseCurrency(
 @Composable
 fun PreviewChooseCurrency() {
     MyAppTheme {
-        ChooseCurrency({}, Currency.getAvailableCurrencies().toList(), "", {})
+        //ChooseCurrency({}, Currency.getAvailableCurrencies().toList(), "", {})
     }
 }

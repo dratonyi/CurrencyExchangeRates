@@ -3,6 +3,7 @@ package com.example.currencyexchangerates.data
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.util.Date
 
 @Entity
 data class TestEntity(
@@ -17,4 +18,11 @@ data class SavedData(
     val baseCurrency: String,
     val targetCurrency: String,
     val baseAmount: String
+)
+
+@Entity(tableName = "symbols")
+data class Symbols(
+    @PrimaryKey val id: Int = 0,
+    val dateUpdated: Date,
+    val symbols: Map<String, String>
 )

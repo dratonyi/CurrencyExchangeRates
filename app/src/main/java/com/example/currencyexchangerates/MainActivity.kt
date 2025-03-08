@@ -52,6 +52,7 @@ class MainActivity : ComponentActivity() {
                     val baseCurrency = viewModel.baseCurrency.collectAsState()
                     val targetCurrency = viewModel.targetCurrency.collectAsState()
                     val search = viewModel.currSearch.collectAsState()
+                    val currencyList = viewModel.allCurrencies.collectAsState()
 
                     NavHost(
                         navController = navController,
@@ -73,7 +74,7 @@ class MainActivity : ComponentActivity() {
                                 onBackButton = {
                                     navController.navigateUp()
                                 },
-                                viewModel.listOfCurrencies,
+                                currencyList.value,
                                 search.value,
                                 { viewModel.onEvent(it) }
                             )

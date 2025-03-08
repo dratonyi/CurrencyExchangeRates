@@ -30,7 +30,7 @@ import com.example.currencyexchangerates.ui.theme.MyAppTheme
 
 @Composable
 fun CurrencyListItem(
-    currency: Currency
+    currency: Map.Entry<String, String>
 ) {
     Surface(
         modifier = Modifier
@@ -60,7 +60,7 @@ fun CurrencyListItem(
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = currency.currencyCode,
+                    text = currency.key,
                     fontWeight = FontWeight.Bold,
                     fontSize = 25.sp
                 )
@@ -69,7 +69,7 @@ fun CurrencyListItem(
 
 
                 Text(
-                    text = currency.displayName,
+                    text = currency.value,
                     fontSize = 20.sp,
                     lineHeight = 20.sp
                 )
@@ -82,6 +82,6 @@ fun CurrencyListItem(
 @Composable
 fun PreviewCurrencyListItem() {
     MyAppTheme {
-        CurrencyListItem(Currency.getInstance("HUF"))
+        //CurrencyListItem(Currency.getInstance("HUF"))
     }
 }

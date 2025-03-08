@@ -2,24 +2,30 @@ package com.example.currencyexchangerates
 
 import android.icu.util.Currency
 import android.util.Log
+import android.util.TimeUtils
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.currencyexchangerates.API.CurrencyRepository
+import com.example.currencyexchangerates.data.AllCurrencies
 import com.example.currencyexchangerates.data.CurrencyData
 import com.example.currencyexchangerates.data.DatabaseDAO
 import com.example.currencyexchangerates.data.SavedData
+import com.example.currencyexchangerates.data.Symbols
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import java.util.Date
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val dao: DatabaseDAO
+    private val dao: DatabaseDAO,
+    private val currencyRepository: CurrencyRepository
 ) : ViewModel() {
     private val _baseCurrency = MutableStateFlow(CurrencyData(Currency.getInstance("EUR"), "100.21"))
     val baseCurrency = _baseCurrency.asStateFlow()
@@ -34,9 +40,41 @@ class MainViewModel @Inject constructor(
     private val _currSearch = MutableStateFlow("")
     val currSearch = _currSearch.asStateFlow()
 
+    private val _allCurrencies = MutableStateFlow(mutableMapOf<String, String>())
+    val allCurrencies = _allCurrencies.asStateFlow()
+
     init {
         getSavedData()
-        
+        getAllCurrencies()
+    }
+
+    private fun getAllCurrencies(){
+        viewModelScope.launch {
+            Log.d("MainViewModel", "ViewModel API call initiated")
+
+            val retrievedData = dao.getSavedSymbols()
+
+            try {
+                val timeDiff = (Date().time - retrievedData.dateUpdated.time)
+
+                if(TimeUnit.MILLISECONDS.toMinutes(timeDiff) > 43800){
+                    throw Exception("too long since last update")
+                }
+
+                _allCurrencies.update { retrievedData.symbols.toMutableMap() }
+            }
+            catch (e:Exception){
+                try {
+                    val temp = currencyRepository.getAllCurrencies()
+                    _allCurrencies.update { temp.symbols.toMutableMap() }
+
+                    dao.saveSymbols(Symbols(dateUpdated = Date(), symbols = _allCurrencies.value))
+                }
+                catch (e: Exception){
+                    Log.e("MainViewModel", "Something went wrong with the API call")
+                }
+            }
+        }
     }
 
     fun onEvent(event: UserEvent) {
@@ -146,9 +184,10 @@ class MainViewModel @Inject constructor(
     private fun getSavedData() {
         CoroutineScope(Dispatchers.Default).launch {
             val retrievedData = dao.getSavedData()
-            Log.d("MainViewModel", "Retrieved ${retrievedData.baseCurrency}, ${retrievedData.targetCurrency}, ${retrievedData.baseAmount} from database")
 
             try {
+                Log.d("MainViewModel", "Retrieved ${retrievedData.baseCurrency}, ${retrievedData.targetCurrency}, ${retrievedData.baseAmount} from database")
+
                 _baseCurrency.update {
                     it.copy(
                         currency = Currency.getInstance(retrievedData.baseCurrency)
