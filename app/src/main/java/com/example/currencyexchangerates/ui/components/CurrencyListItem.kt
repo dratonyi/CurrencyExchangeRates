@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CheckCircle
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -26,55 +28,83 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.currencyexchangerates.UserEvent
 import com.example.currencyexchangerates.ui.theme.MyAppTheme
 
 @Composable
 fun CurrencyListItem(
-    currency: Map.Entry<String, String>
-) {
-    Surface(
-        modifier = Modifier
-            .background(color = MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(16.dp))
-            .clip(RoundedCornerShape(16.dp))
-            .height(100.dp)
+    currency: Map.Entry<String, String>,
+    onEvent: (event: UserEvent) -> Unit,
+    onBackButton: () -> Unit
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(start = 30.dp, end = 20.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                imageVector = Icons.Outlined.CheckCircle,
-                contentDescription = null,
-                modifier = Modifier
-                    .height(50.dp)
-                    .width(50.dp)
-            )
+    Button(
+        onClick = {
+            onEvent(UserEvent.ChangeCurrency(currency.key))
+            onBackButton()
+        },
+        modifier = Modifier
+            /*.background(
+                color = MaterialTheme.colorScheme.surface,
+                shape = RoundedCornerShape(16.dp)
+            )*/
+            .clip(RoundedCornerShape(16.dp))
+            .height(100.dp),
+        shape = RoundedCornerShape(16.dp),
+        colors = ButtonColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+            contentColor = MaterialTheme.colorScheme.primary,
+            disabledContentColor = MaterialTheme.colorScheme.primary,
+            disabledContainerColor = MaterialTheme.colorScheme.surface
+        )
+    ) {
 
-            Column(
+        /*Surface(
+            modifier = Modifier
+                .background(
+                    color = MaterialTheme.colorScheme.surface,
+                    shape = RoundedCornerShape(16.dp)
+                )
+                .clip(RoundedCornerShape(16.dp))
+                .height(100.dp)
+        ) {*/
+            Row(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(start = 30.dp),
-                verticalArrangement = Arrangement.Center
+                    .padding(start = 10.dp, end = 10.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = currency.key,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 25.sp
+                Icon(
+                    imageVector = Icons.Outlined.CheckCircle,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .height(50.dp)
+                        .width(50.dp)
                 )
 
-                //Spacer(modifier = Modifier.height(1.dp))
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(start = 30.dp),
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = currency.key,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 25.sp
+                    )
+
+                    //Spacer(modifier = Modifier.height(1.dp))
 
 
-                Text(
-                    text = currency.value,
-                    fontSize = 20.sp,
-                    lineHeight = 20.sp
-                )
+                    Text(
+                        text = currency.value,
+                        fontSize = 20.sp,
+                        lineHeight = 20.sp
+                    )
+                }
             }
-        }
+
     }
 }
 
@@ -82,6 +112,6 @@ fun CurrencyListItem(
 @Composable
 fun PreviewCurrencyListItem() {
     MyAppTheme {
-        //CurrencyListItem(Currency.getInstance("HUF"))
+        CurrencyListItem(mapOf("CAD" to "Canadian Dollar").entries.toList()[0], {}, {})
     }
 }

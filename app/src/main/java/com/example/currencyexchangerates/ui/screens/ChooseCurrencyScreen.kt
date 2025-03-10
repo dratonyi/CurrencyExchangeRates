@@ -1,6 +1,5 @@
 package com.example.currencyexchangerates.ui.screens
 
-import android.icu.util.Currency
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -8,10 +7,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -37,7 +34,7 @@ fun ChooseCurrency(
     onBackButton: () -> Unit,
     currencies: Map<String, String>,
     search: String,
-    onSearch: (UserEvent) -> Unit
+    onEvent: (UserEvent) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -69,7 +66,7 @@ fun ChooseCurrency(
             ) {
                 OutlinedTextField(
                     value = search,
-                    onValueChange = { onSearch(UserEvent.SearchCurrency(it)) },
+                    onValueChange = { onEvent(UserEvent.SearchCurrency(it)) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(padding)
@@ -86,7 +83,7 @@ fun ChooseCurrency(
                     verticalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
                     itemsIndexed(currencies.entries.toList()) { index, currency ->
-                        CurrencyListItem(currency)
+                        CurrencyListItem(currency, onEvent, onBackButton)
                     }
                 }
             }

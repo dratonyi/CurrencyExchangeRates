@@ -14,6 +14,7 @@ import com.example.currencyexchangerates.data.Symbols
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -42,6 +43,9 @@ class MainViewModel @Inject constructor(
 
     private val _allCurrencies = MutableStateFlow(mutableMapOf<String, String>())
     val allCurrencies = _allCurrencies.asStateFlow()
+
+    var currCurrencyChangeCurrency = "EUR"
+    var currCurrencyChangeType = "base"
 
     init {
         getSavedData()
@@ -83,14 +87,24 @@ class MainViewModel @Inject constructor(
                 updateBaseAmount(event.newAmount)
                 saveData()
             }
-            UserEvent.ChangeBaseCurrency -> TODO()
+            is UserEvent.ChangeCurrency -> {
+                if(currCurrencyChangeType == "base"){
+                    updateCurrency(_baseCurrency, event.newCode)
+                }
+                else if(currCurrencyChangeType == "target") {
+                    updateCurrency(_targetCurrency, event.newCode)
+                }
+            }
             is UserEvent.ChangeTargetAmount -> {
                 updateTargetAmount(event.newAmount)
                 saveData()
             }
-            UserEvent.ChangeTargetCurrency -> TODO()
+            //is UserEvent.ChangeTargetCurrency -> TODO()
             is UserEvent.SearchCurrency-> {
                 searchCurrencyList(event.search)
+            }
+            is UserEvent.GoToChangeCurrencyScreen -> {
+                currCurrencyChangeType = event.type
             }
             UserEvent.doNothing -> TODO()
         }
@@ -183,9 +197,9 @@ class MainViewModel @Inject constructor(
 
     private fun getSavedData() {
         CoroutineScope(Dispatchers.Default).launch {
-            val retrievedData = dao.getSavedData()
-
             try {
+                val retrievedData = dao.getSavedData()
+
                 Log.d("MainViewModel", "Retrieved ${retrievedData.baseCurrency}, ${retrievedData.targetCurrency}, ${retrievedData.baseAmount} from database")
 
                 _baseCurrency.update {
@@ -193,7 +207,7 @@ class MainViewModel @Inject constructor(
                         currency = Currency.getInstance(retrievedData.baseCurrency)
                     )
                 }
-                _baseCurrency.update {
+                _targetCurrency.update {
                     it.copy(
                         currency = Currency.getInstance(retrievedData.targetCurrency)
                     )
@@ -206,5 +220,15 @@ class MainViewModel @Inject constructor(
                 Log.d("MainViewModel", "Error retrieving from database")
             }
         }
+    }
+
+    private fun updateCurrency(currency: MutableStateFlow<CurrencyData>, newCode: String) {
+        currency.update {
+            it.copy(
+                currency = Currency.getInstance(newCode)
+            )
+        }
+
+        saveData()
     }
 }

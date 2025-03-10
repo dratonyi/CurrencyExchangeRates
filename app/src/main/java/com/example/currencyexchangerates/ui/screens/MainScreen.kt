@@ -41,7 +41,7 @@ fun MainBackground(
     baseCurrency: CurrencyData,
     targetCurrency: CurrencyData,
     onEvent: (event: UserEvent) -> Unit,
-    navToChooseCurrency: () -> Unit
+    navToChooseCurrency: () -> Unit,
 ) {
     val scrollState = rememberScrollState()
 
@@ -75,7 +75,7 @@ fun MainBackground(
     )
 }
 
-@Preview(
+/*@Preview(
     showBackground = true,
     uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES
 )
@@ -115,4 +115,4 @@ fun MainBackgroundLightPreview() {
             )
         }
     }
-}
+}*/

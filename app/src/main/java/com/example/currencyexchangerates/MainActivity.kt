@@ -28,13 +28,6 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        /*val db by lazy{
-            Room.databaseBuilder(
-                applicationContext,
-                AppDatabase::class.java,
-                "app_database.db"
-            ).build()
-        }*/
 
         val viewModel: MainViewModel by viewModels()
 
@@ -76,7 +69,7 @@ class MainActivity : ComponentActivity() {
                                 },
                                 currencyList.value,
                                 search.value,
-                                { viewModel.onEvent(it) }
+                                { viewModel.onEvent(it) },
                             )
                         }
                     }
