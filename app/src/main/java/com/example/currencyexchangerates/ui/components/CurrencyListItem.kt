@@ -2,6 +2,7 @@ package com.example.currencyexchangerates.ui.components
 
 import android.icu.util.Currency
 import android.widget.Space
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,7 +11,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CheckCircle
@@ -24,10 +27,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.currencyexchangerates.R
 import com.example.currencyexchangerates.UserEvent
 import com.example.currencyexchangerates.ui.theme.MyAppTheme
 
@@ -35,7 +40,8 @@ import com.example.currencyexchangerates.ui.theme.MyAppTheme
 fun CurrencyListItem(
     currency: Map.Entry<String, String>,
     onEvent: (event: UserEvent) -> Unit,
-    onBackButton: () -> Unit
+    onBackButton: () -> Unit,
+    getFlagId: (code: String) -> Int
     ) {
     Button(
         onClick = {
@@ -74,12 +80,12 @@ fun CurrencyListItem(
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(
-                    imageVector = Icons.Outlined.CheckCircle,
+                Image(
+                    painter = painterResource(getFlagId(currency.key)),
                     contentDescription = null,
                     modifier = Modifier
-                        .height(50.dp)
-                        .width(50.dp)
+                        .size(50.dp)
+                        .clip(CircleShape)
                 )
 
                 Column(
@@ -112,6 +118,6 @@ fun CurrencyListItem(
 @Composable
 fun PreviewCurrencyListItem() {
     MyAppTheme {
-        CurrencyListItem(mapOf("CAD" to "Canadian Dollar").entries.toList()[0], {}, {})
+        //CurrencyListItem(mapOf("CAD" to "Canadian Dollar").entries.toList()[0], {}, {})
     }
 }

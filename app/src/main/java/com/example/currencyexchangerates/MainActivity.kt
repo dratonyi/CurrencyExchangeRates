@@ -1,5 +1,6 @@
 package com.example.currencyexchangerates
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -24,6 +25,7 @@ import com.example.currencyexchangerates.ui.screens.ChooseCurrency
 import com.example.currencyexchangerates.ui.screens.MainBackground
 import com.example.currencyexchangerates.ui.theme.MyAppTheme
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.Locale
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -58,7 +60,8 @@ class MainActivity : ComponentActivity() {
                                 { viewModel.onEvent(it) },
                                 navToChooseCurrency = {
                                     navController.navigate("ChooseCurrency")
-                                }
+                                },
+                                { getFlagFromCode(it) }
                             )
                         }
 
@@ -70,11 +73,25 @@ class MainActivity : ComponentActivity() {
                                 currencyList.value,
                                 search.value,
                                 { viewModel.onEvent(it) },
+                                { getFlagFromCode(it) }
                             )
                         }
                     }
                 }
             }
+        }
+    }
+
+    @SuppressLint("DiscouragedApi")
+    private fun getFlagFromCode(code: String): Int {
+        val flagResourceName: String = code.lowercase()
+        val resourceId = resources.getIdentifier(flagResourceName, "drawable", packageName)
+
+        return if(resourceId != 0){
+            resourceId
+        }
+        else {
+            R.drawable.non
         }
     }
 }

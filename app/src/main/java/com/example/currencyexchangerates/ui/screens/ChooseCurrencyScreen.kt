@@ -35,6 +35,7 @@ fun ChooseCurrency(
     currencies: Map<String, String>,
     search: String,
     onEvent: (UserEvent) -> Unit,
+    getFlagId: (code: String) -> Int
 ) {
     Scaffold(
         topBar = {
@@ -83,7 +84,7 @@ fun ChooseCurrency(
                     verticalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
                     itemsIndexed(currencies.entries.toList()) { index, currency ->
-                        CurrencyListItem(currency, onEvent, onBackButton)
+                        CurrencyListItem(currency, onEvent, onBackButton, getFlagId)
                     }
                 }
             }

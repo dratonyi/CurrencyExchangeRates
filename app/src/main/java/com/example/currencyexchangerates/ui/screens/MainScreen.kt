@@ -42,6 +42,7 @@ fun MainBackground(
     targetCurrency: CurrencyData,
     onEvent: (event: UserEvent) -> Unit,
     navToChooseCurrency: () -> Unit,
+    getFlagId: (code: String) -> Int
 ) {
     val scrollState = rememberScrollState()
 
@@ -67,9 +68,9 @@ fun MainBackground(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Spacer(modifier = Modifier.height(50.dp))
-                CurrencyCard(baseCurrency, "base", onEvent, navToChooseCurrency)
+                CurrencyCard(baseCurrency, "base", onEvent, navToChooseCurrency, getFlagId)
                 Spacer(modifier = Modifier.height(50.dp))
-                CurrencyCard(targetCurrency, "target", onEvent, navToChooseCurrency)
+                CurrencyCard(targetCurrency, "target", onEvent, navToChooseCurrency, getFlagId)
             }
         }
     )

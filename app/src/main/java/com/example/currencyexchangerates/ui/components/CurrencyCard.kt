@@ -1,5 +1,7 @@
 package com.example.currencyexchangerates.ui.components
 
+import android.icu.util.Currency
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -8,7 +10,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -25,9 +29,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.currencyexchangerates.R
 import com.example.currencyexchangerates.UserEvent
 import com.example.currencyexchangerates.data.CurrencyData
 import com.example.currencyexchangerates.ui.theme.MyAppTheme
@@ -38,6 +44,7 @@ fun CurrencyCard(
     type: String,
     onEvent: (event: UserEvent) -> Unit,
     onCardClick: () -> Unit,
+    getFlagId: (code: String) -> Int
 ) {
     Surface(
         modifier = Modifier
@@ -53,6 +60,16 @@ fun CurrencyCard(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
+            Image(
+                painter = painterResource(getFlagId(currency.currency.currencyCode)),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(50.dp)
+                    .clip(CircleShape)
+            )
+
+
+
             Text(
                 text = currency.currency.currencyCode
             )
@@ -74,7 +91,7 @@ fun CurrencyCard(
                     },
                     modifier = Modifier
                         .padding(0.dp)
-                        .width(150.dp)
+                        .width(100.dp)
                         .fillMaxWidth(),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = Color.Gray,
@@ -106,6 +123,6 @@ fun CurrencyCard(
 @Composable
 fun PreviewCurrencyCard() {
     MyAppTheme {
-        //CurrencyCard(CurrencyData(Currency.getInstance("EUR"), "100.21123"), "base", {/* TODO */}, {})
+        //CurrencyCard(CurrencyData(Currency.getInstance("CAD"), "10000"), "base", {/* TODO */}, {})
     }
 }
