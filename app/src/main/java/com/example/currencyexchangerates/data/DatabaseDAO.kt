@@ -24,7 +24,7 @@ interface DatabaseDAO {
     //Symbols
 
     @Query("SELECT * FROM symbols WHERE id = 0")
-    suspend fun getSavedSymbols(): Symbols
+    suspend fun getSavedSymbols(): Symbols?
 
     @Upsert
     suspend fun saveSymbols(symbols: Symbols)

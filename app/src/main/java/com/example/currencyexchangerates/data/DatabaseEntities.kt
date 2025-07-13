@@ -17,7 +17,8 @@ data class SavedData(
     @PrimaryKey val id: Int = 0,
     val baseCurrency: String,
     val targetCurrency: String,
-    val baseAmount: String
+    val baseAmount: String,
+    val exchangeRate: Double
 )
 
 @Entity(tableName = "symbols")

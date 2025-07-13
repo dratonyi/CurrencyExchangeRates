@@ -35,7 +35,7 @@ class MainViewModel @Inject constructor(
     private val _targetCurrency = MutableStateFlow(CurrencyData(Currency.getInstance("CAD"), "100.21"))
     val targetCurrency = _targetCurrency.asStateFlow()
 
-    val exchangeRate: Double = 1.5
+    private var exchangeRate: Double = 0.0
 
     var listOfCurrencies: MutableList<Currency> = Currency.getAvailableCurrencies().toMutableList()
 
@@ -51,15 +51,28 @@ class MainViewModel @Inject constructor(
     init {
         getSavedData()
         getAllCurrencies()
+
+        if(exchangeRate == 0.0) {
+            updateExchangeRate()
+        }
     }
 
     private fun getAllCurrencies(){
         viewModelScope.launch {
-            Log.d("MainViewModel", "ViewModel API call initiated")
+            Log.d("MainViewModel", "Retrieving AllCurrencies")
 
             val retrievedData = dao.getSavedSymbols()
 
-            try {
+            if(retrievedData == null || retrievedData.symbols.isEmpty() || TimeUnit.MILLISECONDS.toMinutes(Date().time - retrievedData.dateUpdated.time) > 43800) {
+                val temp = currencyRepository.getAllCurrencies()
+                _allCurrencies.update { temp.symbols.toMutableMap() }
+                dao.saveSymbols(Symbols(dateUpdated = Date(), symbols = _allCurrencies.value))
+            }
+            else {
+                _allCurrencies.update { retrievedData.symbols.toMutableMap() }
+            }
+
+            /*try {
                 val timeDiff = (Date().time - retrievedData.dateUpdated.time)
 
                 if(TimeUnit.MILLISECONDS.toMinutes(timeDiff) > 43800){
@@ -70,6 +83,7 @@ class MainViewModel @Inject constructor(
             }
             catch (e:Exception){
                 try {
+                    Log.d("MainViewModel", "Database empty retrieving from remote")
                     val temp = currencyRepository.getAllCurrencies()
                     _allCurrencies.update { temp.symbols.toMutableMap() }
 
@@ -78,7 +92,7 @@ class MainViewModel @Inject constructor(
                 catch (e: Exception){
                     Log.e("MainViewModel", "Something went wrong with the API call")
                 }
-            }
+            }*/
         }
     }
 
@@ -184,7 +198,8 @@ class MainViewModel @Inject constructor(
                     SavedData(
                         baseCurrency = _baseCurrency.value.currency.currencyCode,
                         targetCurrency = _targetCurrency.value.currency.currencyCode,
-                        baseAmount = _baseCurrency.value.amount
+                        baseAmount = _baseCurrency.value.amount,
+                        exchangeRate = exchangeRate
                     )
                 )
                 Log.d("MainViewModel", "Saved ${_baseCurrency.value.currency.currencyCode}, ${_targetCurrency.value.currency.currencyCode}, ${_baseCurrency.value.amount} in database")
@@ -214,6 +229,7 @@ class MainViewModel @Inject constructor(
                     )
                 }
 
+                exchangeRate = retrievedData.exchangeRate
                 updateBaseAmount(retrievedData.baseAmount)
             }
             catch (e: Exception) {
@@ -230,6 +246,19 @@ class MainViewModel @Inject constructor(
             )
         }
 
+        updateExchangeRate()
         saveData()
+    }
+
+    private fun updateExchangeRate() {
+        viewModelScope.launch {
+            val response = currencyRepository.getExchangeRates(_baseCurrency.value.currency, listOf(_targetCurrency.value.currency))
+
+            if(response.success) {
+                exchangeRate = response.rates[_targetCurrency.value.currency.currencyCode] ?: 1.0
+                updateBaseAmount(_baseCurrency.value.amount)
+                Log.d("MainViewModel-ExchangeRate", "Updated target value based on recieved exchange rate")
+            }
+        }
     }
 }
