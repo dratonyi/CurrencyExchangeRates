@@ -6,5 +6,6 @@ sealed interface UserEvent {
     data class ChangeTargetAmount(val newAmount: String): UserEvent
     data class SearchCurrency(val search: String): UserEvent
     data class GoToChangeCurrencyScreen(val type: String): UserEvent
+    object swapCurrencies: UserEvent
     object doNothing: UserEvent
 }

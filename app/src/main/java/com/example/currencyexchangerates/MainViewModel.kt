@@ -121,6 +121,9 @@ class MainViewModel @Inject constructor(
             is UserEvent.GoToChangeCurrencyScreen -> {
                 currCurrencyChangeType = event.type
             }
+            is UserEvent.swapCurrencies -> {
+                swapCurrencies()
+            }
             UserEvent.doNothing -> TODO()
         }
     }
@@ -259,6 +262,15 @@ class MainViewModel @Inject constructor(
                 updateBaseAmount(_baseCurrency.value.amount)
                 Log.d("MainViewModel-ExchangeRate", "Updated target value based on recieved exchange rate")
             }
+        }
+    }
+
+    private fun swapCurrencies() {
+        val temp = _baseCurrency.value
+        _baseCurrency.update { _targetCurrency.value }
+        _targetCurrency.update { temp }
+        if(exchangeRate != 0.0) {
+            exchangeRate = 1 / exchangeRate
         }
     }
 }

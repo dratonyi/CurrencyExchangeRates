@@ -1,6 +1,8 @@
 package com.example.currencyexchangerates.ui.screens
 
+import android.graphics.Color
 import android.icu.util.Currency
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,9 +14,19 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonColors
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -71,12 +83,30 @@ fun MainBackground(
                 CurrencyCard(baseCurrency, "base", onEvent, navToChooseCurrency, getFlagId)
                 Spacer(modifier = Modifier.height(50.dp))
                 CurrencyCard(targetCurrency, "target", onEvent, navToChooseCurrency, getFlagId)
+                Spacer(modifier = Modifier.height(50.dp))
+                OutlinedButton(
+                    onClick = { onEvent(UserEvent.swapCurrencies) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        contentColor = MaterialTheme.colorScheme.primary
+                    ),
+                    border = BorderStroke(1.dp, androidx.compose.ui.graphics.Color.Gray)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Refresh,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
             }
         }
     )
 }
 
-/*@Preview(
+@Preview(
     showBackground = true,
     uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES
 )
@@ -91,12 +121,13 @@ fun MainBackgroundPreview() {
                 CurrencyData(),
                 CurrencyData(),
                 {/*TODO*/},
-                {}
+                {},
+                getFlagId = {it.toIntOrNull() ?: 0}
             )
         }
     }
 }
-
+/*
 @Preview(
     showBackground = true,
     uiMode = android.content.res.Configuration.UI_MODE_NIGHT_NO
