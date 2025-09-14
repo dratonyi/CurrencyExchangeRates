@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.currencyexchangerates.API.CurrencyRepository
 import com.example.currencyexchangerates.data.AllCurrencies
 import com.example.currencyexchangerates.data.CurrencyData
+import com.example.currencyexchangerates.data.CurrencyState
 import com.example.currencyexchangerates.data.DatabaseDAO
 import com.example.currencyexchangerates.data.SavedData
 import com.example.currencyexchangerates.data.Symbols
@@ -29,6 +30,10 @@ class MainViewModel @Inject constructor(
     private val dao: DatabaseDAO,
     private val currencyRepository: CurrencyRepository
 ) : ViewModel() {
+
+    private val _currencyState = MutableStateFlow(CurrencyState())
+    val currencyState = _currencyState.asStateFlow()
+
     private val _baseCurrency = MutableStateFlow(CurrencyData(Currency.getInstance("EUR"), "100.21"))
     val baseCurrency = _baseCurrency.asStateFlow()
 
@@ -50,11 +55,6 @@ class MainViewModel @Inject constructor(
 
     init {
         getSavedData()
-        getAllCurrencies()
-
-        if(exchangeRate == 0.0) {
-            updateExchangeRate()
-        }
     }
 
     private fun getAllCurrencies(){
@@ -71,28 +71,6 @@ class MainViewModel @Inject constructor(
             else {
                 _allCurrencies.update { retrievedData.symbols.toMutableMap() }
             }
-
-            /*try {
-                val timeDiff = (Date().time - retrievedData.dateUpdated.time)
-
-                if(TimeUnit.MILLISECONDS.toMinutes(timeDiff) > 43800){
-                    throw Exception("too long since last update")
-                }
-
-                _allCurrencies.update { retrievedData.symbols.toMutableMap() }
-            }
-            catch (e:Exception){
-                try {
-                    Log.d("MainViewModel", "Database empty retrieving from remote")
-                    val temp = currencyRepository.getAllCurrencies()
-                    _allCurrencies.update { temp.symbols.toMutableMap() }
-
-                    dao.saveSymbols(Symbols(dateUpdated = Date(), symbols = _allCurrencies.value))
-                }
-                catch (e: Exception){
-                    Log.e("MainViewModel", "Something went wrong with the API call")
-                }
-            }*/
         }
     }
 
@@ -119,6 +97,7 @@ class MainViewModel @Inject constructor(
                 searchCurrencyList(event.search)
             }
             is UserEvent.GoToChangeCurrencyScreen -> {
+                getAllCurrencies()
                 currCurrencyChangeType = event.type
             }
             is UserEvent.swapCurrencies -> {
@@ -219,21 +198,26 @@ class MainViewModel @Inject constructor(
             try {
                 val retrievedData = dao.getSavedData()
 
-                Log.d("MainViewModel", "Retrieved ${retrievedData.baseCurrency}, ${retrievedData.targetCurrency}, ${retrievedData.baseAmount} from database")
+                Log.d("MainViewModel", "Retrieved ${retrievedData?.baseCurrency}, ${retrievedData?.targetCurrency}, ${retrievedData?.baseAmount} from database")
 
                 _baseCurrency.update {
                     it.copy(
-                        currency = Currency.getInstance(retrievedData.baseCurrency)
+                        currency = Currency.getInstance(retrievedData?.baseCurrency)
                     )
                 }
                 _targetCurrency.update {
                     it.copy(
-                        currency = Currency.getInstance(retrievedData.targetCurrency)
+                        currency = Currency.getInstance(retrievedData?.targetCurrency)
                     )
                 }
 
-                exchangeRate = retrievedData.exchangeRate
-                updateBaseAmount(retrievedData.baseAmount)
+                if(retrievedData == null) {
+                    Log.d("MainViewModel", "No Saved Exchange Rate Data, updating exchange rate")
+                    updateExchangeRate()
+                }
+
+                exchangeRate = retrievedData?.exchangeRate ?: 0.0
+                updateBaseAmount(retrievedData?.baseAmount ?: "0")
             }
             catch (e: Exception) {
                 //set default amounts

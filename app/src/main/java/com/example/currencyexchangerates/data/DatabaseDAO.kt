@@ -19,7 +19,7 @@ interface DatabaseDAO {
     suspend fun deleteSavedData(data: SavedData)
 
     @Query("SELECT * FROM last_saved_data WHERE id = 0")
-    suspend fun getSavedData(): SavedData
+    suspend fun getSavedData(): SavedData?
 
     //Symbols
 
