@@ -18,6 +18,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.Date
@@ -50,6 +51,9 @@ class MainViewModel @Inject constructor(
     private val _allCurrencies = MutableStateFlow(mutableMapOf<String, String>())
     val allCurrencies = _allCurrencies.asStateFlow()
 
+    private val _filteredCurrencies = MutableStateFlow(mutableMapOf<String, String>())
+    val filteredCurrencies = _filteredCurrencies.asStateFlow()
+
     var currCurrencyChangeCurrency = "EUR"
     var currCurrencyChangeType = "base"
 
@@ -66,10 +70,12 @@ class MainViewModel @Inject constructor(
             if(retrievedData == null || retrievedData.symbols.isEmpty() || TimeUnit.MILLISECONDS.toMinutes(Date().time - retrievedData.dateUpdated.time) > 43800) {
                 val temp = currencyRepository.getAllCurrencies()
                 _allCurrencies.update { temp.symbols.toMutableMap() }
+                _filteredCurrencies.update { temp.symbols.toMutableMap() }
                 dao.saveSymbols(Symbols(dateUpdated = Date(), symbols = _allCurrencies.value))
             }
             else {
                 _allCurrencies.update { retrievedData.symbols.toMutableMap() }
+                _filteredCurrencies.update { retrievedData.symbols.toMutableMap() }
             }
         }
     }
@@ -163,13 +169,10 @@ class MainViewModel @Inject constructor(
     private fun searchCurrencyList(search: String) {
         _currSearch.update { search }
 
-        if(_currSearch.value == "") {
-            listOfCurrencies = Currency.getAvailableCurrencies().toMutableList()
-        }
-        else {
-            listOfCurrencies = (listOfCurrencies.filter { currency ->
-                currency.currencyCode.contains(_currSearch.value) || currency.displayName.contains(_currSearch.value)
-            }).toMutableList()
+        _filteredCurrencies.update { _allCurrencies.value.filter { (code, name) ->
+                code.contains(_currSearch.value, ignoreCase = true) ||
+                name.contains(_currSearch.value, ignoreCase = true)
+            }.toMutableMap()
         }
     }
 

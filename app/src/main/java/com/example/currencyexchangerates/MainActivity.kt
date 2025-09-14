@@ -47,7 +47,7 @@ class MainActivity : ComponentActivity() {
                     val baseCurrency = viewModel.baseCurrency.collectAsState()
                     val targetCurrency = viewModel.targetCurrency.collectAsState()
                     val search = viewModel.currSearch.collectAsState()
-                    val currencyList = viewModel.allCurrencies.collectAsState()
+                    val currencyList = viewModel.filteredCurrencies.collectAsState()
 
                     NavHost(
                         navController = navController,
